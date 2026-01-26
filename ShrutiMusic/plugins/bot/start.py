@@ -66,9 +66,17 @@ async def start_pm(client, message: Message, _):
         # /start help
         if name[0:4] == "help":
             keyboard = help_pannel_page1(_)
+
+            help_text = _["help_1"].format(SUPPORT_GROUP)
+
+            # ✅ Remove BlushMusicbot redirect link
+            help_text = help_text.replace(
+                "https://t.me/BlushMusicbot?start=help",
+                f"https://t.me/{BOT_USERNAME}?start=help"
+            )
+
             return await message.reply_text(
-                text=_["help_1"].format(SUPPORT_GROUP)
-                + f"\n\n<b>Developer:</b> <code>{DEVELOPER_NAME}</code>",
+                text=help_text + f"\n\n<b>Developer:</b> <code>{DEVELOPER_NAME}</code>",
                 reply_markup=keyboard,
                 disable_web_page_preview=True,
             )
