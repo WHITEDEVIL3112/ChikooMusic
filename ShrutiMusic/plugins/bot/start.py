@@ -66,9 +66,13 @@ async def start_pm(client, message: Message, _):
         # /start help
         if name[0:4] == "help":
             keyboard = help_pannel_page1(_)
+
+            # ✅ FIX: do not redirect to any other bot group
+            # We directly replace support group link with YOUR SUPPORT_GROUP
+            help_text = _["help_1"].format(SUPPORT_GROUP)
+
             return await message.reply_text(
-                text=_["help_1"].format(SUPPORT_GROUP)
-                + f"\n\n<b>Developer:</b> <code>{DEVELOPER_NAME}</code>",
+                text=help_text + f"\n\n<b>Developer:</b> <code>{DEVELOPER_NAME}</code>",
                 reply_markup=keyboard,
                 disable_web_page_preview=True,
             )
@@ -127,7 +131,6 @@ async def start_pm(client, message: Message, _):
 
             await m.delete()
 
-            # send thumbnail photo (safe URL)
             try:
                 await app.send_photo(
                     chat_id=message.chat.id,
