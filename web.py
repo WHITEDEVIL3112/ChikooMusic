@@ -1,7 +1,7 @@
 import os
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-PORT = int(os.environ.get("PORT", "10000"))
+PORT = int(os.environ.get("PORT", 10000))
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -12,7 +12,7 @@ class Handler(BaseHTTPRequestHandler):
 
 def run():
     server = HTTPServer(("0.0.0.0", PORT), Handler)
-    print(f"Web server running on port {PORT}")
+    print(f"Web server running on 0.0.0.0:{PORT}")
     server.serve_forever()
 
 if __name__ == "__main__":
