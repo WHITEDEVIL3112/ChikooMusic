@@ -34,9 +34,6 @@ SUPPORT_CHANNEL = "https://t.me/BrokenXworld"
 DEVELOPER_CONTACT = "https://t.me/nox_shadowx"
 
 
-# ---------------------------
-# BUTTONS
-# ---------------------------
 def private_buttons():
     return InlineKeyboardMarkup(
         [
@@ -71,9 +68,7 @@ def group_buttons():
     )
 
 
-# ============================
-# START COMMAND (PRIVATE)
-# ============================
+# ---------------- START PRIVATE ----------------
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
@@ -91,8 +86,8 @@ async def start_pm(client, message: Message, _):
                 "✨ **HELP MENU**\n\n"
                 "Tap the buttons below to view commands & features.\n\n"
                 f"👥 Support Group: {SUPPORT_GROUP}\n"
-                f"📢 Support Channel: {SUPPORT_CHANNEL}\n"
-                f"👤 Developer: {DEVELOPER_CONTACT}\n"
+                f"📢 Support Channel: {SUPPORT_CHANNEL}\n\n"
+                "Developer: nox_shadowx"
             )
 
             return await message.reply_text(
@@ -118,30 +113,19 @@ async def start_pm(client, message: Message, _):
         # -------- TRACK INFO --------
         if name[0:3] == "inf":
             m = await message.reply_text("🔎 Searching...")
-
             query = (str(name)).replace("info_", "", 1)
             query = f"https://www.youtube.com/watch?v={query}"
             results = VideosSearch(query, limit=1)
 
-            title = "Unknown"
-            duration = "Unknown"
-            views = "Unknown"
-            thumbnail = None
-            channellink = ""
-            channel = "Unknown"
-            link = ""
-            published = "Unknown"
-
             for result in (await results.next())["result"]:
-                title = result.get("title", "Unknown")
-                duration = result.get("duration", "Unknown")
-                views = result.get("viewCount", {}).get("short", "Unknown")
-                thumbnail = result.get("thumbnails", [{}])[0].get("url", "")
-                thumbnail = thumbnail.split("?")[0] if thumbnail else None
-                channellink = result.get("channel", {}).get("link", "")
-                channel = result.get("channel", {}).get("name", "Unknown")
-                link = result.get("link", "")
-                published = result.get("publishedTime", "Unknown")
+                title = result["title"]
+                duration = result["duration"]
+                views = result["viewCount"]["short"]
+                thumbnail = result["thumbnails"][0]["url"].split("?")[0]
+                channellink = result["channel"]["link"]
+                channel = result["channel"]["name"]
+                link = result["link"]
+                published = result["publishedTime"]
 
             searched_text = _["start_6"].format(
                 title, duration, views, published, channellink, channel, app.mention
@@ -150,7 +134,7 @@ async def start_pm(client, message: Message, _):
             key = InlineKeyboardMarkup(
                 [
                     [
-                        InlineKeyboardButton(text=_["S_B_8"], url=link or SUPPORT_CHANNEL),
+                        InlineKeyboardButton(text=_["S_B_8"], url=link),
                         InlineKeyboardButton(text=_["S_B_9"], url=SUPPORT_GROUP),
                     ],
                 ]
@@ -158,27 +142,12 @@ async def start_pm(client, message: Message, _):
 
             await m.delete()
 
-            # Send thumbnail if available, else send text
-            if thumbnail:
-                try:
-                    await app.send_photo(
-                        chat_id=message.chat.id,
-                        photo=thumbnail,
-                        caption=searched_text,
-                        reply_markup=key,
-                    )
-                except:
-                    await message.reply_text(
-                        searched_text,
-                        reply_markup=key,
-                        disable_web_page_preview=True,
-                    )
-            else:
-                await message.reply_text(
-                    searched_text,
-                    reply_markup=key,
-                    disable_web_page_preview=True,
-                )
+            await app.send_photo(
+                chat_id=message.chat.id,
+                photo=thumbnail,
+                caption=searched_text,
+                reply_markup=key,
+            )
 
             if await is_on_off(2):
                 return await app.send_message(
@@ -260,9 +229,7 @@ async def start_pm(client, message: Message, _):
         )
 
 
-# ============================
-# START COMMAND (GROUP)
-# ============================
+# ---------------- START GROUP ----------------
 @app.on_message(filters.command(["start"]) & filters.group & ~BANNED_USERS)
 @LanguageStart
 async def start_gp(client, message: Message, _):
@@ -285,9 +252,7 @@ async def start_gp(client, message: Message, _):
     return await add_served_chat(message.chat.id)
 
 
-# ============================
-# WELCOME (BOT JOIN + NEW MEMBERS)
-# ============================
+# ---------------- WELCOME ----------------
 @app.on_message(filters.new_chat_members, group=-1)
 async def welcome(client, message: Message):
     for member in message.new_chat_members:
@@ -295,21 +260,17 @@ async def welcome(client, message: Message):
             language = await get_lang(message.chat.id)
             _ = get_string(language)
 
-            # Ban banned users
             if await is_banned_user(member.id):
                 try:
                     await message.chat.ban_member(member.id)
                 except:
                     pass
-                continue
 
-            # If bot joined
             if member.id == app.id:
                 if message.chat.type != ChatType.SUPERGROUP:
                     await message.reply_text(_["start_4"])
                     return await app.leave_chat(message.chat.id)
 
-                # Leave blacklisted chats
                 if message.chat.id in await blacklisted_chats():
                     await message.reply_text(
                         _["start_5"].format(
@@ -339,17 +300,6 @@ async def welcome(client, message: Message):
                 await add_served_chat(message.chat.id)
                 await message.stop_propagation()
 
-            # If normal user joined
-            else:
-                try:
-                    await message.reply_text(
-                        f"👋 Welcome {member.mention} to **{message.chat.title}**!\n\n"
-                        f"🎧 Powered by @{BOT_USERNAME}",
-                        disable_web_page_preview=True,
-                    )
-                except:
-                    pass
-
         except Exception as ex:
             print(ex)
 
@@ -360,11 +310,19 @@ async def welcome(client, message: Message):
 @app.on_message(filters.video_chat_started, group=-1)
 async def vc_started(_, message: Message):
     try:
+        # Send inside the same group where VC started
+        await app.send_message(
+            chat_id=message.chat.id,
+            text="😍 <b>VIDEO CHAT STARTED</b> 🥳",
+        )
+
+        # Optional: also send to LOG group (only if enabled)
         if await is_on_off(2):
             await app.send_message(
                 chat_id=config.LOG_GROUP_ID,
-                text=f"🔴 <b>Video Chat Started</b>\n\n<b>Chat:</b> {message.chat.title}\n<b>ID:</b> <code>{message.chat.id}</code>",
+                text=f"😍 <b>VIDEO CHAT STARTED</b> 🥳\n\n<b>Chat:</b> {message.chat.title}\n<b>ID:</b> <code>{message.chat.id}</code>",
             )
+
     except Exception as e:
         print(e)
 
@@ -372,10 +330,18 @@ async def vc_started(_, message: Message):
 @app.on_message(filters.video_chat_ended, group=-1)
 async def vc_ended(_, message: Message):
     try:
+        # Send inside the same group where VC ended
+        await app.send_message(
+            chat_id=message.chat.id,
+            text="⚫ <b>VIDEO CHAT ENDED</b>",
+        )
+
+        # Optional: also send to LOG group (only if enabled)
         if await is_on_off(2):
             await app.send_message(
                 chat_id=config.LOG_GROUP_ID,
-                text=f"⚫ <b>Video Chat Ended</b>\n\n<b>Chat:</b> {message.chat.title}\n<b>ID:</b> <code>{message.chat.id}</code>",
+                text=f"⚫ <b>VIDEO CHAT ENDED</b>\n\n<b>Chat:</b> {message.chat.title}\n<b>ID:</b> <code>{message.chat.id}</code>",
             )
+
     except Exception as e:
         print(e)
