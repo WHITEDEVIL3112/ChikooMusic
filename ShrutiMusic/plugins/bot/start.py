@@ -158,7 +158,6 @@ async def start_pm(client, message: Message, _):
                         f"<b>Username:</b> @{message.from_user.username}"
                     ),
                 )
-            return
 
         # -------- /start start --------
         if name == "start":
@@ -193,7 +192,6 @@ async def start_pm(client, message: Message, _):
                         f"<b>Username:</b> @{message.from_user.username}"
                     ),
                 )
-            return
 
     # Normal /start
     UP, CPU, RAM, DISK = await bot_sys_stats()
@@ -302,46 +300,3 @@ async def welcome(client, message: Message):
 
         except Exception as ex:
             print(ex)
-
-
-# ============================
-# VIDEO CHAT STARTED / ENDED
-# ============================
-@app.on_message(filters.video_chat_started, group=-1)
-async def vc_started(_, message: Message):
-    try:
-        # Send inside the same group where VC started
-        await app.send_message(
-            chat_id=message.chat.id,
-            text="😍 <b>VIDEO CHAT STARTED</b> 🥳",
-        )
-
-        # Optional: also send to LOG group (only if enabled)
-        if await is_on_off(2):
-            await app.send_message(
-                chat_id=config.LOG_GROUP_ID,
-                text=f"😍 <b>VIDEO CHAT STARTED</b> 🥳\n\n<b>Chat:</b> {message.chat.title}\n<b>ID:</b> <code>{message.chat.id}</code>",
-            )
-
-    except Exception as e:
-        print(e)
-
-
-@app.on_message(filters.video_chat_ended, group=-1)
-async def vc_ended(_, message: Message):
-    try:
-        # Send inside the same group where VC ended
-        await app.send_message(
-            chat_id=message.chat.id,
-            text="⚫ <b>VIDEO CHAT ENDED</b>",
-        )
-
-        # Optional: also send to LOG group (only if enabled)
-        if await is_on_off(2):
-            await app.send_message(
-                chat_id=config.LOG_GROUP_ID,
-                text=f"⚫ <b>VIDEO CHAT ENDED</b>\n\n<b>Chat:</b> {message.chat.title}\n<b>ID:</b> <code>{message.chat.id}</code>",
-            )
-
-    except Exception as e:
-        print(e)
