@@ -20,26 +20,28 @@ from ShrutiMusic.utils.database import (
 from ShrutiMusic.utils import bot_sys_stats
 from ShrutiMusic.utils.decorators.language import LanguageStart
 from ShrutiMusic.utils.formatters import get_readable_time
-from ShrutiMusic.utils.inline import help_pannel_page1, start_panel
+from ShrutiMusic.utils.inline import help_pannel_page1
 from config import BANNED_USERS
 from strings import get_string
 
 
-DEVELOPER_NAME = "nox_shadowx"
+# ---------------------------
+# YOUR CUSTOM LINKS / DETAILS
+# ---------------------------
 BOT_USERNAME = "ChikooMusic_bot"
-
 SUPPORT_GROUP = "https://t.me/Music_Brigade_Chatting_zone"
 SUPPORT_CHANNEL = "https://t.me/BrokenXworld"
 DEVELOPER_CONTACT = "https://t.me/nox_shadowx"
 
-ADD_TO_GROUP_URL = f"https://t.me/{BOT_USERNAME}?startgroup=true"
 
-
-def main_start_buttons(_):
+def private_buttons():
     return InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton("➕ Add Me To Group", url=ADD_TO_GROUP_URL),
+                InlineKeyboardButton(
+                    "➕ Add Me To Group",
+                    url=f"https://t.me/{BOT_USERNAME}?startgroup=true",
+                )
             ],
             [
                 InlineKeyboardButton("👥 Support Group", url=SUPPORT_GROUP),
@@ -52,49 +54,69 @@ def main_start_buttons(_):
     )
 
 
+def group_buttons():
+    return InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("👥 Support Group", url=SUPPORT_GROUP),
+                InlineKeyboardButton("📢 Support Channel", url=SUPPORT_CHANNEL),
+            ],
+            [
+                InlineKeyboardButton("👤 Developer Contact", url=DEVELOPER_CONTACT),
+            ],
+        ]
+    )
+
+
+# ---------------- START PRIVATE ----------------
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
     await add_served_user(message.from_user.id)
 
-    buttons = main_start_buttons(_)
-
-    # /start with args
+    # If user used /start with arguments
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
 
-        # /start help
+        # -------- HELP --------
         if name[0:4] == "help":
             keyboard = help_pannel_page1(_)
+
+            help_text = (
+                "✨ **HELP MENU**\n\n"
+                "Tap the buttons below to view commands & features.\n\n"
+                f"👥 Support Group: {SUPPORT_GROUP}\n"
+                f"📢 Support Channel: {SUPPORT_CHANNEL}\n\n"
+                "Developer: nox_shadowx"
+            )
+
             return await message.reply_text(
-                text=_["help_1"].format(SUPPORT_GROUP)
-                + f"\n\n<b>Developer:</b> <code>{DEVELOPER_NAME}</code>",
+                help_text,
                 reply_markup=keyboard,
                 disable_web_page_preview=True,
             )
 
-        # /start sudolist
+        # -------- SUDO LIST --------
         if name[0:3] == "sud":
             await sudoers_list(client=client, message=message, _=_)
             if await is_on_off(2):
                 return await app.send_message(
                     chat_id=config.LOG_GROUP_ID,
                     text=(
-                        f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>sᴜᴅᴏʟɪsᴛ</b>.\n\n"
-                        f"<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n"
-                        f"<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}\n\n"
-                        f"<b>Developer:</b> <code>{DEVELOPER_NAME}</code>"
+                        f"{message.from_user.mention} just started the bot to check <b>sudo list</b>.\n\n"
+                        f"<b>User ID:</b> <code>{message.from_user.id}</code>\n"
+                        f"<b>Username:</b> @{message.from_user.username}"
                     ),
                 )
             return
 
-        # /start info_<ytid>
+        # -------- TRACK INFO --------
         if name[0:3] == "inf":
-            m = await message.reply_text("🔎")
+            m = await message.reply_text("🔎 Searching...")
             query = (str(name)).replace("info_", "", 1)
             query = f"https://www.youtube.com/watch?v={query}"
-
             results = VideosSearch(query, limit=1)
+
             for result in (await results.next())["result"]:
                 title = result["title"]
                 duration = result["duration"]
@@ -113,68 +135,84 @@ async def start_pm(client, message: Message, _):
                 [
                     [
                         InlineKeyboardButton(text=_["S_B_8"], url=link),
-                        InlineKeyboardButton(text="👥 Support Group", url=SUPPORT_GROUP),
-                    ],
-                    [
-                        InlineKeyboardButton("➕ Add Me To Group", url=ADD_TO_GROUP_URL),
-                        InlineKeyboardButton("📢 Support Channel", url=SUPPORT_CHANNEL),
-                    ],
-                    [
-                        InlineKeyboardButton("👤 Developer Contact", url=DEVELOPER_CONTACT),
+                        InlineKeyboardButton(text=_["S_B_9"], url=SUPPORT_GROUP),
                     ],
                 ]
             )
 
             await m.delete()
 
-            # send thumbnail photo (safe URL)
-            try:
-                await app.send_photo(
-                    chat_id=message.chat.id,
-                    photo=thumbnail,
-                    caption=searched_text + f"\n\n<b>Developer:</b> <code>{DEVELOPER_NAME}</code>",
-                    reply_markup=key,
-                )
-            except:
-                await message.reply_text(
-                    searched_text + f"\n\n<b>Developer:</b> <code>{DEVELOPER_NAME}</code>",
-                    reply_markup=key,
-                    disable_web_page_preview=True,
-                )
+            await app.send_photo(
+                chat_id=message.chat.id,
+                photo=thumbnail,
+                caption=searched_text,
+                reply_markup=key,
+            )
 
             if await is_on_off(2):
                 return await app.send_message(
                     chat_id=config.LOG_GROUP_ID,
                     text=(
-                        f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n"
-                        f"<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n"
-                        f"<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}\n\n"
-                        f"<b>Developer:</b> <code>{DEVELOPER_NAME}</code>"
+                        f"{message.from_user.mention} just started the bot to check <b>track info</b>.\n\n"
+                        f"<b>User ID:</b> <code>{message.from_user.id}</code>\n"
+                        f"<b>Username:</b> @{message.from_user.username}"
                     ),
                 )
-            return
 
-        # /start start
+        # -------- /start start --------
         if name == "start":
             UP, CPU, RAM, DISK = await bot_sys_stats()
-            return await message.reply_text(
-                text=_["start_2"].format(
-                    message.from_user.mention, app.mention, UP, DISK, CPU, RAM
-                )
-                + f"\n\n<b>Developer:</b> <code>{DEVELOPER_NAME}</code>",
-                reply_markup=buttons,
+
+            start_text = (
+                f"✨ HELLO {message.from_user.mention}\n\n"
+                f"❖ WELCOME TO | @{BOT_USERNAME} |\n\n"
+                "➤ A smart & elegant music bot built for Telegram voice chats.\n\n"
+                "➤ Enjoy: Smooth Playback • HD Sound • No Lag\n\n"
+                "➤ Sources: YouTube • Spotify • Apple • Saavn\n\n"
+                "➤ Tap HELP to view all commands & features.\n\n"
+                f"📌 Uptime: {UP}\n"
+                f"💾 Disk: {DISK}\n"
+                f"🧠 CPU: {CPU}\n"
+                f"📌 RAM: {RAM}\n\n"
+                "Developer: nox_shadowx"
+            )
+
+            await message.reply_text(
+                start_text,
+                reply_markup=private_buttons(),
                 disable_web_page_preview=True,
             )
+
+            if await is_on_off(2):
+                return await app.send_message(
+                    chat_id=config.LOG_GROUP_ID,
+                    text=(
+                        f"{message.from_user.mention} just started the bot.\n\n"
+                        f"<b>User ID:</b> <code>{message.from_user.id}</code>\n"
+                        f"<b>Username:</b> @{message.from_user.username}"
+                    ),
+                )
 
     # Normal /start
     UP, CPU, RAM, DISK = await bot_sys_stats()
 
+    start_text = (
+        f"✨ HELLO {message.from_user.mention}\n\n"
+        f"❖ WELCOME TO | @{BOT_USERNAME} |\n\n"
+        "➤ A smart & elegant music bot built for Telegram voice chats.\n\n"
+        "➤ Enjoy: Smooth Playback • HD Sound • No Lag\n\n"
+        "➤ Sources: YouTube • Spotify • Apple • Saavn\n\n"
+        "➤ Tap HELP to view all commands & features.\n\n"
+        f"📌 Uptime: {UP}\n"
+        f"💾 Disk: {DISK}\n"
+        f"🧠 CPU: {CPU}\n"
+        f"📌 RAM: {RAM}\n\n"
+        "Developer: nox_shadowx"
+    )
+
     await message.reply_text(
-        text=_["start_2"].format(
-            message.from_user.mention, app.mention, UP, DISK, CPU, RAM
-        )
-        + f"\n\n<b>Developer:</b> <code>{DEVELOPER_NAME}</code>",
-        reply_markup=buttons,
+        start_text,
+        reply_markup=private_buttons(),
         disable_web_page_preview=True,
     )
 
@@ -182,44 +220,37 @@ async def start_pm(client, message: Message, _):
         return await app.send_message(
             chat_id=config.LOG_GROUP_ID,
             text=(
-                f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n"
-                f"<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n"
-                f"<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}\n\n"
-                f"<b>Developer:</b> <code>{DEVELOPER_NAME}</code>"
+                f"{message.from_user.mention} just started the bot.\n\n"
+                f"<b>User ID:</b> <code>{message.from_user.id}</code>\n"
+                f"<b>Username:</b> @{message.from_user.username}"
             ),
         )
 
 
+# ---------------- START GROUP ----------------
 @app.on_message(filters.command(["start"]) & filters.group & ~BANNED_USERS)
 @LanguageStart
 async def start_gp(client, message: Message, _):
-    out = start_panel(_)
     uptime = int(time.time() - _boot_)
 
-    group_buttons = InlineKeyboardMarkup(
-        [
-            [
-                InlineKeyboardButton("➕ Add Me To Group", url=ADD_TO_GROUP_URL),
-            ],
-            [
-                InlineKeyboardButton("👥 Support Group", url=SUPPORT_GROUP),
-                InlineKeyboardButton("📢 Support Channel", url=SUPPORT_CHANNEL),
-            ],
-            [
-                InlineKeyboardButton("👤 Developer Contact", url=DEVELOPER_CONTACT),
-            ],
-        ]
+    text = (
+        f"🎵 {app.mention} is alive!\n\n"
+        f"⏳ Uptime: {get_readable_time(uptime)}\n\n"
+        f"👥 Support Group: {SUPPORT_GROUP}\n"
+        f"📢 Support Channel: {SUPPORT_CHANNEL}\n\n"
+        "Developer: nox_shadowx"
     )
 
     await message.reply_text(
-        text=_["start_1"].format(app.mention, get_readable_time(uptime))
-        + f"\n\n<b>Developer:</b> <code>{DEVELOPER_NAME}</code>",
-        reply_markup=group_buttons,
+        text,
+        reply_markup=group_buttons(),
         disable_web_page_preview=True,
     )
+
     return await add_served_chat(message.chat.id)
 
 
+# ---------------- WELCOME ----------------
 @app.on_message(filters.new_chat_members, group=-1)
 async def welcome(client, message: Message):
     for member in message.new_chat_members:
@@ -242,24 +273,25 @@ async def welcome(client, message: Message):
                     await message.reply_text(
                         _["start_5"].format(
                             app.mention,
-                            f"https://t.me/{app.username}?start=sudolist",
+                            f"https://t.me/{BOT_USERNAME}?start=sudolist",
                             SUPPORT_GROUP,
                         ),
                         disable_web_page_preview=True,
                     )
                     return await app.leave_chat(message.chat.id)
 
-                out = start_panel(_)
+                welcome_text = (
+                    f"🎧 {app.mention} has joined **{message.chat.title}**!\n\n"
+                    "Thanks for adding me.\n"
+                    "Use /start to see commands.\n\n"
+                    f"👥 Support Group: {SUPPORT_GROUP}\n"
+                    f"📢 Support Channel: {SUPPORT_CHANNEL}\n\n"
+                    "Developer: nox_shadowx"
+                )
 
                 await message.reply_text(
-                    text=_["start_3"].format(
-                        message.from_user.first_name,
-                        app.mention,
-                        message.chat.title,
-                        app.mention,
-                    )
-                    + f"\n\n<b>Developer:</b> <code>{DEVELOPER_NAME}</code>",
-                    reply_markup=InlineKeyboardMarkup(out),
+                    welcome_text,
+                    reply_markup=group_buttons(),
                     disable_web_page_preview=True,
                 )
 
