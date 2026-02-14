@@ -294,7 +294,7 @@ bash start
 
 **𝐌𝐚𝐢𝐧 𝐃𝐞𝐯𝐞𝐥𝐨𝐩𝐞𝐫**
 
-[![Mᴀʀɪɴᴇ](https://img.shields.io/badge/NoxxOP-black?style=for-the-badge&logo=github)](https://github.com/WHITEDEVIL3112)
+[![Mᴀʀɪɴᴇ](https://img.shields.io/badge/Marine-black?style=for-the-badge&logo=github)](https://github.com/WHITEDEVIL3112)
 
 **𝐒𝐩𝐞𝐜𝐢𝐚𝐥 𝐓𝐡𝐚𝐧𝐤𝐬 𝐭𝐨 𝐀𝐥𝐥 𝐂𝐨𝐧𝐭𝐫𝐢𝐛𝐮𝐭𝐨𝐫𝐬**
 
@@ -318,7 +318,7 @@ bash start
 
 | **𝐒𝐮𝐩𝐩𝐨𝐫𝐭 𝐂𝐡𝐚𝐧𝐧𝐞𝐥** | **𝐒𝐮𝐩𝐩𝐨𝐫𝐭 𝐆𝐫𝐨𝐮𝐩** |
 |:---:|:---:|
-| [![Channel](https://img.shields.io/badge/Join%20Channel-black?style=for-the-badge&logo=telegram)](https://t.me/ShrutiBots) | [![Group](https://img.shields.io/badge/Join%20Group-black?style=for-the-badge&logo=telegram)](https://t.me/ShrutiBotSupport) |
+| [![Channel](https://img.shields.io/badge/Join%20Channel-black?style=for-the-badge&logo=telegram)](https://t.me/BrokenXworld) | [![Group](https://img.shields.io/badge/Join%20Group-black?style=for-the-badge&logo=telegram)](https://t.me/Music_Brigade_Chatting_zone) |
 | Latest Updates | 24/7 Help & Support |
 
 ---
