@@ -14,9 +14,9 @@
 
 > **𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 𝐓𝐢𝐦𝐞:** `1-3 seconds` | **𝐒𝐭𝐚𝐛𝐢𝐥𝐢𝐭𝐲:** `99.9% Uptime`
 
-[![Support Channel](https://img.shields.io/badge/Support%20Channel-black?style=for-the-badge&logo=telegram)](https://t.me/ShrutiBots)
-[![Support Group](https://img.shields.io/badge/Support%20Group-black?style=for-the-badge&logo=telegram)](https://t.me/ShrutiBotSupport)
-[![Owner](https://img.shields.io/badge/Owner-black?style=for-the-badge&logo=telegram)](https://t.me/WTF_WhyMeeh)
+[![Support Channel](https://img.shields.io/badge/Support%20Channel-black?style=for-the-badge&logo=telegram)](https://t.me/BrokenXworld)
+[![Support Group](https://img.shields.io/badge/Support%20Group-black?style=for-the-badge&logo=telegram)](https://t.me/Music_Brigade_Chatting_zone)
+[![Owner](https://img.shields.io/badge/Owner-black?style=for-the-badge&logo=telegram)](https://t.me/nox_shadowx)
 
 [![Forks](https://img.shields.io/github/forks/NoxxOP/ShrutiMusic?color=black&logo=github&logoColor=black&style=for-the-badge)](https://github.com/NoxxOP/ShrutiMusic/fork)
 [![Stars](https://img.shields.io/github/stars/NoxxOP/ShrutiMusic?color=black&logo=github&logoColor=black&style=for-the-badge)](https://github.com/NoxxOP/ShrutiMusic/stargazers)
