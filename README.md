@@ -323,7 +323,7 @@ bash start
 
 ---
 
-<img src="https://img.shields.io/badge/Made%20with%20%E2%9D%A4%EF%B8%8F%20by-NoxxOP-orange?style=for-the-badge&logo=heart" alt="Made with love">
+<img src="https://img.shields.io/badge/Made%20with%20%E2%9D%A4%EF%B8%8F%20by-Marine-orange?style=for-the-badge&logo=heart" alt="Made with love">
 
 ---
 
