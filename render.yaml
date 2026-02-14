@@ -28,7 +28,7 @@ services:
       BOT_USERNAME:
         value: ShrutixMusicBot
       UPSTREAM_REPO:
-        value: https://github.com/NoxxOP/ShrutiMusic
+        value: https://github.com/WHITEDEVIL3112/ChikooMusic
       STRING_SESSION:
         sync: false
       GIT_TOKEN:
@@ -40,11 +40,11 @@ services:
       LOG_GROUP_ID:
         value: -1002321189618
       SUPPORT_GROUP:
-        value: https://t.me/ShrutiBotsupport
+        value: https://t.me/Music_Brigade_Chatting_zone
       SUPPORT_CHANNEL:
-        value: https://t.me/ShrutiBots
+        value: https://t.me/BrokenXworld
       INSTAGRAM:
-        value: https://instagram.com/yaduwanshi_nand
+        value: https://instagram.com/_nox_shadowx
       YOUTUBE:
         value: https://youtube.com/@NandEditz
       GITHUB:
